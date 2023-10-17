@@ -157,14 +157,12 @@ function nextQuestion() {
 function backQuestion() {
     if (qidx > 0) {
         qidx--;
-
-        // Always update the scores based on the previous question's partyChoices
-        calculateResult(qidx, getSelectedAnswer());
-
-        // Update the UI with the previous question
         questionT.innerHTML = questions[qidx].question;
         gprosent();
-
+        let radioChecked = document.querySelector('input[name="answer"]:checked');
+        if (radioChecked) {
+            calculateResult(qidx, radioChecked.value);
+        }
         console.log(partyScores);
         console.log(qidx);
     } else {
@@ -172,38 +170,21 @@ function backQuestion() {
     }
 }
 
-// Helper function to get the selected answer when going back
-function getSelectedAnswer() {
-    // Loop through the radio buttons and find the checked one
-    for (let radioButton of rbAnswer) {
-        if (radioButton.checked) {
-            return radioButton.value;
-        }
-    }
 
-    // If no radio button is checked, return a default value (you can adjust this)
-    return 'default';
-}
+//regner ut poengene til de forskjellige partiene etter hvert sprøsmål.
 
 
-
-// Modify the calculateResult function to include an optional subtract parameter
-function calculateResult(qidx, chosen, subtract = false) {
+function calculateResult(qidx, chosen) {
     console.log(qidx, chosen)
 
     let partyChoices = questions[qidx][chosen]
     console.log(partyChoices)
 
-    for (let party in partyChoices) {
-        if (subtract) {
-            partyScores[party] -= partyChoices[party];
-        } else {
-            partyScores[party] += partyChoices[party];
-        }
+    for (let party in partyChoices){
+        partyScores[party] += partyChoices[party]
     }
     console.log(partyScores)
 }
-
 
 function showResult() {
     let sorted = new Map()
